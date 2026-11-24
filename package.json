@@ -1,0 +1,24 @@
+{
+  "name": "ssid-lab-qa-playwright",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HugoDelourme/ssid-lab-qa-playwright.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/HugoDelourme/ssid-lab-qa-playwright/issues"
+  },
+  "homepage": "https://github.com/HugoDelourme/ssid-lab-qa-playwright#readme",
+  "devDependencies": {
+    "@playwright/test": "1.65.1",
+    "@types/node": "26.6.7",
+    "dotenv": "18.0.10"
+  }
+}
