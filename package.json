@@ -3,7 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "preinstall": "npx only-allow pnpm"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HugoDelourme/ssid-lab-qa-playwright.git"
@@ -17,8 +25,16 @@
   },
   "homepage": "https://github.com/HugoDelourme/ssid-lab-qa-playwright#readme",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "1.65.1",
     "@types/node": "26.6.7",
-    "dotenv": "18.0.10"
+    "dotenv": "18.0.10",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-playwright": "^2.12.2",
+    "prettier": "^3.10.1",
+    "prettier-plugin-sort-json": "^4.2.0",
+    "typescript": "^7.0.2",
+    "typescript-eslint": "^8.74.0"
   }
 }
