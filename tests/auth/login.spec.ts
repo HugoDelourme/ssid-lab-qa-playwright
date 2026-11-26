@@ -3,6 +3,10 @@ import { takeAndCompareScreenshot } from '../../utils/helper';
 
 const PASSWORD = process.env.TEST_PASSWORD!;
 
+test.afterEach(async ({ context }) => {
+  await context.close();
+});
+
 test('Cas 1 : Connexion et déconnexion avec jean_dupont', async ({ loginPage }) => {
   await loginPage.goto();
   await loginPage.login('jean_dupont', PASSWORD);

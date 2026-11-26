@@ -5,6 +5,12 @@ import { devices } from '@playwright/test';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+export const AUTH_FILES = {
+  jean_dupont: path.resolve(__dirname, 'playwright/.auth/jean_dupont.json'),
+  client_chaos: path.resolve(__dirname, 'playwright/.auth/client_chaos.json'),
+  tortue_du_web: path.resolve(__dirname, 'playwright/.auth/tortue_du_web.json'),
+};
+
 export default defineConfig({
   expect: {
     timeout: 10000,
@@ -16,7 +22,30 @@ export default defineConfig({
     {
       name: 'auth',
       testMatch: /tests\/auth\/.*\.spec\.ts/,
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: {
+          height: 1080,
+          width: 1920,
+        },
+      },
+    },
+    {
+      name: 'setup',
+      testMatch: /tests\/setup\/.*\.setup\.ts/,
+    },
+    {
+      name: 'e2e-chromium',
+      testMatch: /tests\/e2e\/.*\.spec\.ts/,
+      dependencies: ['setup'],
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: AUTH_FILES.jean_dupont,
+        viewport: {
+          height: 1080,
+          width: 1920,
+        },
+      },
     },
   ],
   testDir: './tests',
