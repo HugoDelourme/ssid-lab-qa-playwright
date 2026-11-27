@@ -1,0 +1,105 @@
+name: Playwright CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  # Job 1 : Quality Gate rapide (PR & Push sur main)
+  quality-gate:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Static checks (TypeScript, ESLint, Prettier)
+        run: |
+          pnpm typecheck
+          pnpm lint
+          pnpm format:check
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run critical tests (auth + e2e-chromium)
+        env:
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+        run: pnpm exec playwright test --project=auth --project=e2e-chromium
+
+      - name: Upload Playwright HTML Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-quality-gate
+          path: playwright-report/
+          retention-days: 7
+
+      - name: Upload traces & screenshots on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces-quality-gate
+          path: test-results/
+          retention-days: 7
+
+  # Job 2 : Suite complète nocturne (cross-browser, multi-comptes, mode dégradé)
+  nightly:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install all Playwright browsers
+        run: pnpm exec playwright install --with-deps
+
+      - name: Run full test suite
+        env:
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+        run: pnpm exec playwright test
+
+      - name: Upload Full Playwright Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-nightly
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload traces on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces-nightly
+          path: test-results/
+          retention-days: 14

@@ -94,12 +94,15 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: process.env.BASE_URL || 'https://ssid-testing-agency.github.io/Lab.qa/',
+    ignoreHTTPSErrors: process.env.IGNORE_HTTPS_ERRORS === 'true',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
-  snapshotPathTemplate: `screenshots/{testFilePath}/{arg}{ext}`,
+  reporter: process.env.CI
+    ? [['github'], ['html', { open: 'never' }]]
+    : [['list'], ['html', { open: 'never' }]],
+  snapshotPathTemplate: `screenshots/{projectName}/{platform}/{testFilePath}/{arg}{ext}`,
 });
