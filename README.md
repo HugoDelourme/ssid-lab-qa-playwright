@@ -57,6 +57,7 @@ Les moteurs de rendu de polices et l'anti-aliasing diffèrent entre macOS/Window
 3. **Tolérance maîtrisée :** `maxDiffPixelRatio` est configuré pour absorber les micro-écarts de rendu sans masquer une vraie régression visuelle.
 
 Update snapshots locally:
+
 docker run --rm --ipc=host \
 -v $(pwd):/work \
 -v /work/node_modules \
@@ -64,4 +65,4 @@ docker run --rm --ipc=host \
 -e TEST_PASSWORD=Baguette42! \
 -e IGNORE_HTTPS_ERRORS=true \
 mcr.microsoft.com/playwright:v1.65.1-noble \
-bash -c "npm install -g pnpm@9.15.0 && pnpm install --frozen-lockfile --store-dir /tmp/.pnpm-store && pnpm exec playwright test --project=auth --project=e2e-chromium --update-snapshots"
+bash -c "npm install -g pnpm@9.15.0 && pnpm install --frozen-lockfile --store-dir /tmp/.pnpm-store && pnpm exec playwright test --project=auth --project=e2e-chromium --project=e2e-firefox --update-snapshots"

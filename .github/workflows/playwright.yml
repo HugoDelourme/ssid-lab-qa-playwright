@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-traces-quality-gate
+          name: playwright-traces-quality-gate-${{ github.run_number }}
           path: test-results/
           retention-days: 7
 
@@ -61,12 +61,14 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./playwright-report
           publish_branch: gh-pages
+          destination_dir: quality-gate/run-${{ github.run_number }}
+          keep_files: true
 
       - name: Add Report Link to Job Summary
         if: ${{ !cancelled() }}
         run: |
-          echo "### 📊 Rapport Playwright en ligne" >> $GITHUB_STEP_SUMMARY
-          echo "👉 [Ouvrir le rapport HTML](https://hugodelourme.github.io/ssid-lab-qa-playwright/)" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 Rapport Playwright en ligne (Quality Gate #${{ github.run_number }})" >> $GITHUB_STEP_SUMMARY
+          echo "👉 [Ouvrir le rapport HTML](https://hugodelourme.github.io/ssid-lab-qa-playwright/quality-gate/run-${{ github.run_number }}/)" >> $GITHUB_STEP_SUMMARY
 
   # Job 2 : Suite complète nocturne (cross-browser, multi-comptes, mode dégradé)
   nightly:
@@ -102,7 +104,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-traces-nightly
+          name: playwright-traces-nightly-${{ github.run_number }}
           path: test-results/
           retention-days: 14
 
@@ -113,9 +115,11 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./playwright-report
           publish_branch: gh-pages
+          destination_dir: nightly/run-${{ github.run_number }}
+          keep_files: true
 
       - name: Add Report Link to Job Summary
         if: ${{ !cancelled() }}
         run: |
-          echo "### 📊 Rapport Playwright en ligne (Nightly)" >> $GITHUB_STEP_SUMMARY
-          echo "👉 [Ouvrir le rapport HTML](https://hugodelourme.github.io/ssid-lab-qa-playwright/)" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 Rapport Playwright en ligne (Nightly #${{ github.run_number }})" >> $GITHUB_STEP_SUMMARY
+          echo "👉 [Ouvrir le rapport HTML](https://hugodelourme.github.io/ssid-lab-qa-playwright/nightly/run-${{ github.run_number }}/)" >> $GITHUB_STEP_SUMMARY
