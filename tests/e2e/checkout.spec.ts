@@ -15,6 +15,7 @@ test('Cas 3 : Parcours d’achat complet avec gestion d’erreur paiement', asyn
 }) => {
   await test.step('1. Ajouter 3 produits de 3 catégories différentes (dont 1 en promo)', async () => {
     await page.goto('./');
+    await expect(catalogPage.productGrid).toBeVisible();
     await takeAndCompareScreenshot(catalogPage.page, `homepage`);
 
     await catalogPage.addShirtToCart();
