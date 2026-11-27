@@ -21,6 +21,11 @@ export class CheckoutPage {
   readonly paymentAcceptedConfirmationTitle: Locator;
   readonly returnToCatalogButton: Locator;
   readonly returnToCartButton: Locator;
+  readonly subtotalValue: Locator;
+  readonly discountValue: Locator;
+  readonly vatValue: Locator;
+  readonly shippingValue: Locator;
+  readonly totalValue: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -42,6 +47,27 @@ export class CheckoutPage {
     this.paymentAcceptedConfirmationTitle = page.getByTestId('confirmation-title');
     this.returnToCatalogButton = page.getByTestId('confirmation-home');
     this.returnToCartButton = page.getByTestId('checkout-cancel');
+    this.subtotalValue = page.getByTestId('review-subtotal');
+    this.discountValue = page.getByTestId('review-discount');
+    this.vatValue = page.getByTestId('review-tax');
+    this.shippingValue = page.getByTestId('review-delivery');
+    this.totalValue = page.getByTestId('review-total');
+  }
+
+  private parsePrice(text: string | null): number {
+    if (!text) return 0;
+    const cleaned = text.replace(/[^0-9.,]/g, '').replace(',', '.');
+    return parseFloat(cleaned) || 0;
+  }
+
+  async getDisplayedSummary() {
+    return {
+      subtotal: this.parsePrice(await this.subtotalValue.textContent()),
+      discount: this.parsePrice(await this.discountValue.textContent()),
+      vat: this.parsePrice(await this.vatValue.textContent()),
+      shipping: this.parsePrice(await this.shippingValue.textContent()),
+      total: this.parsePrice(await this.totalValue.textContent()),
+    };
   }
 
   @step

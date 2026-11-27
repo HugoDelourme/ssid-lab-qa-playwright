@@ -1,6 +1,7 @@
 import { test, expect } from '../../fixtures';
 import { takeAndCompareScreenshot } from '../../utils/helper';
 import { TEST_CARDS, PROMO_CODES, CUSTOMER_INFO } from '../../data/checkout';
+import { calculateExpectedSummary } from '../../utils/priceCalculator';
 
 test.afterEach(async ({ context }) => {
   await context.close();
@@ -52,7 +53,19 @@ test('Cas 3 : Parcours d’achat complet avec gestion d’erreur paiement', asyn
     await takeAndCompareScreenshot(cartPage.page, `empty checkout page`);
 
     await checkoutPage.returnToCart();
-    await takeAndCompareScreenshot(cartPage.page, `3 items in cart`);
+    await takeAndCompareScreenshot(cartPage.page, `2 items in cart`);
+
+    //Check amounts for cart
+    const itemsInCart = [
+      { unitPrice: 19.99, quantity: 1 },
+      { unitPrice: 59.99, quantity: 3 },
+    ];
+
+    const expectedCart = calculateExpectedSummary(itemsInCart, 10, 0);
+
+    const actualCart = await cartPage.getDisplayedSummary();
+
+    expect(actualCart).toEqual(expectedCart);
 
     await cartPage.goToCheckout();
 
@@ -79,6 +92,13 @@ test('Cas 3 : Parcours d’achat complet avec gestion d’erreur paiement', asyn
 
     await checkoutPage.returnToRecapCheckout();
     await takeAndCompareScreenshot(checkoutPage.page, `recap checkout page`);
+
+    //Check amounts for checkout recap
+    const expectedCheckout = calculateExpectedSummary(itemsInCart, 10, 9.99);
+
+    const actualCheckout = await checkoutPage.getDisplayedSummary();
+
+    expect(actualCheckout).toEqual(expectedCheckout);
 
     await checkoutPage.finishCheckout();
   });

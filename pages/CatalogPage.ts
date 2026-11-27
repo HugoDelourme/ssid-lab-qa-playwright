@@ -11,6 +11,7 @@ export class CatalogPage {
   readonly addToCartBackpackButton: Locator;
   readonly addToCartHeadphoneButton: Locator;
   readonly cartIcon: Locator;
+  readonly sortSelect: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -22,6 +23,7 @@ export class CatalogPage {
     this.addToCartBackpackButton = page.getByTestId('add-to-cart-sauce-backpack');
     this.addToCartHeadphoneButton = page.getByTestId('add-to-cart-sauce-headphones');
     this.cartIcon = page.getByTestId('cart-icon');
+    this.sortSelect = page.getByTestId('sort-select');
   }
 
   @step
@@ -29,6 +31,21 @@ export class CatalogPage {
     await this.sidebarCategoryClothing.click();
     await this.shirtSizeLButton.click();
     await this.addToCartShirtButton.click();
+  }
+
+  @step
+  async selectClothingCategory() {
+    await this.sidebarCategoryClothing.click();
+  }
+
+  @step
+  async orderByPriceAscClothingCategory() {
+    await this.sortSelect.selectOption('price-asc');
+  }
+
+  @step
+  async orderByPriceDescClothingCategory() {
+    await this.sortSelect.selectOption('price-desc');
   }
 
   @step
