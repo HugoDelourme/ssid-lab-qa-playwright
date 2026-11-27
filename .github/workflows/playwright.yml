@@ -12,7 +12,7 @@ on:
 jobs:
   # Job 1 : Quality Gate rapide (PR & Push sur main/master)
   quality-gate:
-    if: github.event_name != 'schedule'
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -46,14 +46,6 @@ jobs:
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
         run: pnpm exec playwright test --project=auth --project=e2e-chromium
 
-      - name: Upload Playwright HTML Report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report-quality-gate
-          path: playwright-report/
-          retention-days: 7
-
       - name: Upload traces & screenshots on failure
         uses: actions/upload-artifact@v4
         if: failure()
@@ -69,6 +61,12 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./playwright-report
           publish_branch: gh-pages
+
+      - name: Add Report Link to Job Summary
+        if: ${{ !cancelled() }}
+        run: |
+          echo "### 📊 Rapport Playwright en ligne" >> $GITHUB_STEP_SUMMARY
+          echo "👉 [Ouvrir le rapport HTML](https://hugodelourme.github.io/ssid-lab-qa-playwright/)" >> $GITHUB_STEP_SUMMARY
 
   # Job 2 : Suite complète nocturne (cross-browser, multi-comptes, mode dégradé)
   nightly:
@@ -100,14 +98,6 @@ jobs:
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
         run: pnpm exec playwright test
 
-      - name: Upload Full Playwright Report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report-nightly
-          path: playwright-report/
-          retention-days: 14
-
       - name: Upload traces on failure
         uses: actions/upload-artifact@v4
         if: failure()
@@ -123,3 +113,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./playwright-report
           publish_branch: gh-pages
+
+      - name: Add Report Link to Job Summary
+        if: ${{ !cancelled() }}
+        run: |
+          echo "### 📊 Rapport Playwright en ligne (Nightly)" >> $GITHUB_STEP_SUMMARY
+          echo "👉 [Ouvrir le rapport HTML](https://hugodelourme.github.io/ssid-lab-qa-playwright/)" >> $GITHUB_STEP_SUMMARY
