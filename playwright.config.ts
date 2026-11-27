@@ -11,6 +11,18 @@ export const AUTH_FILES = {
   tortue_du_web: path.resolve(__dirname, 'playwright/.auth/tortue_du_web.json'),
 };
 
+const DESKTOP_VIEWPORT = { width: 1920, height: 1080 };
+
+const CHROME_DESKTOP = {
+  ...devices['Desktop Chrome'],
+  viewport: DESKTOP_VIEWPORT,
+};
+
+const FIREFOX_DESKTOP = {
+  ...devices['Desktop Firefox'],
+  viewport: DESKTOP_VIEWPORT,
+};
+
 export default defineConfig({
   expect: {
     timeout: 10000,
@@ -39,13 +51,34 @@ export default defineConfig({
       testMatch: /tests\/e2e\/.*\.spec\.ts/,
       dependencies: ['setup'],
       use: {
-        ...devices['Desktop Chrome'],
+        ...CHROME_DESKTOP,
         storageState: AUTH_FILES.jean_dupont,
-        viewport: {
-          height: 1080,
-          width: 1920,
-        },
       },
+    },
+    {
+      name: 'e2e-firefox',
+      testMatch: /tests\/e2e\/.*\.spec\.ts/,
+      dependencies: ['setup'],
+      use: { ...FIREFOX_DESKTOP, storageState: AUTH_FILES.jean_dupont },
+    },
+    {
+      name: 'multi-jean_dupont',
+      testMatch: /tests\/multi-account\/.*\.spec\.ts/,
+      dependencies: ['setup'],
+      use: { ...CHROME_DESKTOP, storageState: AUTH_FILES.jean_dupont },
+    },
+    {
+      name: 'multi-client_chaos',
+      testMatch: /tests\/multi-account\/.*\.spec\.ts/,
+      dependencies: ['setup'],
+      use: { ...CHROME_DESKTOP, storageState: AUTH_FILES.client_chaos },
+    },
+    {
+      name: 'multi-tortue_du_web',
+      testMatch: /tests\/multi-account\/.*\.spec\.ts/,
+      dependencies: ['setup'],
+      timeout: 60_000,
+      use: { ...CHROME_DESKTOP, storageState: AUTH_FILES.tortue_du_web },
     },
   ],
   testDir: './tests',
