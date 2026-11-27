@@ -1,5 +1,6 @@
 import { Page, Locator } from '@playwright/test';
 import { step } from '../utils/decorators';
+import { expect } from '../fixtures';
 
 export class CatalogPage {
   readonly page: Page;
@@ -12,6 +13,9 @@ export class CatalogPage {
   readonly addToCartHeadphoneButton: Locator;
   readonly cartIcon: Locator;
   readonly sortSelect: Locator;
+  readonly productPrices: Locator;
+  readonly nextPageButton: Locator;
+  readonly productGrid: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -24,6 +28,9 @@ export class CatalogPage {
     this.addToCartHeadphoneButton = page.getByTestId('add-to-cart-sauce-headphones');
     this.cartIcon = page.getByTestId('cart-icon');
     this.sortSelect = page.getByTestId('sort-select');
+    this.nextPageButton = page.getByTestId('pagination-next');
+    this.productPrices = page.getByTestId(/^product-price-/);
+    this.productGrid = page.getByTestId('product-grid');
   }
 
   @step
@@ -63,5 +70,32 @@ export class CatalogPage {
   @step
   async goToCart() {
     await this.cartIcon.click();
+  }
+
+  async getAllPricesAcrossPages(): Promise<number[]> {
+    const allPrices: number[] = [];
+
+    while (true) {
+      await expect(this.productPrices.first()).toBeVisible();
+      const priceTexts = await this.productPrices.allTextContents();
+
+      for (const text of priceTexts) {
+        const cleaned = parseFloat(text.replace(/[^0-9.,]/g, '').replace(',', '.'));
+        if (!Number.isNaN(cleaned)) {
+          allPrices.push(cleaned);
+        }
+      }
+
+      const hasNext =
+        (await this.nextPageButton.isVisible()) && (await this.nextPageButton.isEnabled());
+
+      if (!hasNext) {
+        break;
+      }
+
+      await this.nextPageButton.click();
+    }
+
+    return allPrices;
   }
 }

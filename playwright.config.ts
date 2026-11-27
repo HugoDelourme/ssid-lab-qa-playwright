@@ -80,6 +80,15 @@ export default defineConfig({
       timeout: 60_000,
       use: { ...CHROME_DESKTOP, storageState: AUTH_FILES.tortue_du_web },
     },
+    {
+      name: 'bugs',
+      testMatch: /tests\/bugs\/.*\.spec\.ts/,
+      dependencies: ['setup'],
+      use: {
+        ...CHROME_DESKTOP,
+        storageState: AUTH_FILES.jean_dupont,
+      },
+    },
   ],
   testDir: './tests',
   fullyParallel: true,
