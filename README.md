@@ -194,19 +194,20 @@ Si cette suite protégeait les déploiements d'un projet en production, le déco
 - **Dans la Quality Gate d'une Pull Request (rapide, bloquante, < 3–5 min) :**
   - Les vérifications statiques (`typecheck`, `lint`, `format:check`) pour détecter immédiatement les erreurs de syntaxe ou de typage.
   - Les parcours critiques métier sur le navigateur majoritaire (**Chromium**) : authentification (`auth`), parcours d'achat et calculs (`checkout.spec.ts`), tri catalogue (`catalog-sort.spec.ts`) et tests rapides par injection d'état (`fast-checkout.spec.ts`).
-  - *Pourquoi :* une PR doit donner un verdict rapide et fiable sans bloquer l'équipe ni consommer excessivement de minutes CI.
+  - _Pourquoi :_ une PR doit donner un verdict rapide et fiable sans bloquer l'équipe ni consommer excessivement de minutes CI.
 
 - **Dans la suite nocturne (exhaustive, non bloquante sur le flux PR) :**
   - La couverture **cross-browser** (`e2e-firefox`, et WebKit si pertinent).
   - Les scénarios **multi-comptes à comportement dégradé ou lent** (`client_chaos`, `tortue_du_web` avec timeout étendu à 60 s).
   - Le suivi des anomalies connues (`bugs`) et les tests de régression visuelle étendus.
-  - *Pourquoi :* ces tests sont plus longs ou plus sensibles à la latence ; les exécuter la nuit permet de détecter les régressions spécifiques à un navigateur ou à un profil avant une mise en production, sans ralentir le cycle de développement quotidien.
+  - _Pourquoi :_ ces tests sont plus longs ou plus sensibles à la latence ; les exécuter la nuit permet de détecter les régressions spécifiques à un navigateur ou à un profil avant une mise en production, sans ralentir le cycle de développement quotidien.
 
 ---
 
 ## Usage de l'IA
 
 Des assistants IA ont été utilisés de manière ponctuelle en appui sur ce projet, notamment pour :
+
 - Structurer et affiner le workflow GitHub Actions (gestion des artefacts, publication GitHub Pages par run, gestion des captures Docker Linux vs macOS).
 - Accélérer la rédaction de la documentation (fiches d'anomalies et structuration du README).
 - Challenger certaines bonnes pratiques Playwright (gestion des `storageState`, paramétrisation des tests, tolérance de régression visuelle).
